@@ -92,7 +92,7 @@
             color: var(--dark);
             font-size: 1.2rem;
             cursor: pointer;
-            margin-left: 15px;
+            margin-left: auto;
             transition: color 0.3s ease;
         }
 
@@ -583,6 +583,20 @@
             font-size: 1.5rem;
             color: var(--dark);
             cursor: pointer;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        /* Mobile Menu Improvements */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
         }
 
         /* Animations */
@@ -614,7 +628,7 @@
             }
             
             .nav-container {
-                position: absolute;
+                position: fixed;
                 top: 0;
                 left: 0;
                 width: 280px;
@@ -623,12 +637,16 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
                 border-right: none;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
                 padding: 15px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
             
             .nav-container.open {
                 transform: translateX(0);
+            }
+            
+            .mobile-menu-overlay.active {
+                display: block;
             }
             
             .content-container {
@@ -708,6 +726,9 @@
 <body>
     <div class="app-container">
         <header class="app-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="app-title">
                 <i class="fas fa-tshirt"></i>
                 <span>Muška odeća</span>
@@ -719,10 +740,9 @@
             <button class="dark-mode-toggle" id="darkModeToggle">
                 <i class="fas fa-moon"></i>
             </button>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
         </header>
+
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
         <main class="app-main">
             <div class="nav-container" id="navContainer">
@@ -738,23 +758,26 @@
                         <li class="category-item active" data-category="majice">
                             <i class="fas fa-tshirt"></i>
                             <span>MAJICE</span>
-                            <span class="item-count">8</span>
                         </li>
                         <li class="category-item" data-category="farmerke">
                             <i class="fas fa-vest"></i>
                             <span>FARMERKE</span>
-                            <span class="item-count">5</span>
                         </li>
                         <li class="category-item" data-category="kosulje">
                             <i class="fas fa-shirt"></i>
                             <span>KOŠULJE</span>
-                            <span class="item-count">6</span>
                         </li>
                         <li class="category-item" data-category="odela">
                             <i class="fas fa-user-tie"></i>
                             <span>ODELA</span>
-                            <span class="item-count">4</span>
                         </li>
+                    </ul>
+                </div>
+
+                <div class="category-section" id="subCategoriesSection">
+                    <div class="section-title">Podkategorije</div>
+                    <ul class="category-list" id="subCategoriesList">
+                        <!-- Dinamički će se popuniti JavaScript-om -->
                     </ul>
                 </div>
 
@@ -806,206 +829,1279 @@
         // Podaci o proizvodima sa slikama
         const productsData = {
             majice: {
-                "02/285 Premium": [
-                    { 
-                        name: "Bela", 
-                        code: "02/285 Premium",
-                        image: "02285 premium bela.jpg",
-                        description: "Bela pamučna majica kratkih rukava, udobnog kroja."
-                    },
-                    { 
-                        name: "Zelena",
-                        code: "02/285 Premium",
-                        image: "02285 premium zelena.jpg",
-                        description: "Zelena pamučna majica kratkih rukava, klasičnog kroja."
-                    },
-                    { 
-                        name: "Plava", 
-                        code: "02/285 Premium",
-                        image: "02285 premium plava.jpg",
-                        description: "Plava pamučna majica kratkih rukava,premium kvalitet."
-                    },
-                    { 
-                        name: "Roze", 
-                        code: "02/285 Premium",
-                        image: "02285 premium roze.jpg",
-                        description: "Roze pamučna majica kratkih rukava, premium kvalitet."
-                    },
-                    { 
-                        name: "Teget", 
-                        code: "02/285 Premium",
-                        image: "02285 premium teget.jpg",
-                        description: "Teget pamučna majica kratkih rukava, premium kvalitet."
-                    },
-                    { 
-                        name: "Siva", 
-                        code: "02/285 Premium",
-                        image: "02285 premium siva.jpg",
-                        description: "Siva pamučna majica kratkih rukava, premium kvalitet."
-                    },
-                    { 
-                        name: "Maslina", 
-                        code: "02/285 Premium",
-                        image: "02285 premium maslina.jpg",
-                        description: "Maslinasta pamučna majica kratkih rukava, premium kvalitet."
-                    },
+                roba: {
+            "FR 4694 Cadiz": [
+                { 
+                    name: "Bela", 
+                    code: "FR 4694 Cadiz",
+                    image: "belacadiz.jpg",
+                    description: "Opis proizvoda FR 4694 Cadiz"
+                },
+                { 
+                    name: "Krem", 
+                    code: "FR 4694 Cadiz",
+                    image: "belacadiz.jpg",
+                    description: "Opis proizvoda FR 4694 Cadiz"
+                },
+                { 
+                    name: "Braon", 
+                    code: "FR 4694 Cadiz",
+                    image: "braoncadiz.jpg",
+                    description: "Opis proizvoda FR 4694 Cadiz"
+                },
+                { 
+                    name: "Plava", 
+                    code: "FR 4694 Cadiz",
+                    image: "plavacadiz.jpg",
+                    description: "Opis proizvoda FR 4694 Cadiz"
+                },
+            ],
 
-                ],
-                "02/352 Medium New": [
-                    { 
-                        name: "Bela", 
-                        code: "02/352 Medium New",
-                        image: "02352 medium new bela.jpg",
-                        description: "Bela pamučna majica kratkih rukava, osnovni model."
-                    },
-                    { 
-                        name: "Teget", 
-                        code: "02/352 Medium New",
-                        image: "02352 medium new teget.jpg",
-                        description: "Siva pamučna majica kratkih rukava, udobnog kroja."
-                    },
-                    { 
-                        name: "Siva", 
-                        code: "02/352 Medium New",
-                        image: "02352 medium new siva.jpg",
-                        description: "Siva pamučna majica kratkih rukava, udobnog kroja."
-                    },
-                    { 
-                        name: "Crna", 
-                        code: "02/352 Medium New",
-                        image: "02352 medium new crna.jpg",
-                        description: "Siva pamučna majica kratkih rukava, udobnog kroja."
-                    }
-                ],
-                "02/347 Sorgado": [
-                    { 
-                        name: "Crna", 
-                        code: "02/347 Sorgado",
-                        image: "02347 sorgado bela.jpg",
-                        description: "Crna pamučna majica kratkih rukava, sportski stil."
-                    },
-                    { 
-                        name: "Bela", 
-                        code: "02/347 Sorgado",
-                        image: "02347 sorgado bela.jpg",
-                        description: "Bela pamučna majica kratkih rukava, letnji stil."
-                    },
-                    { 
-                        name: "Teget", 
-                        code: "02/347 Sorgado",
-                        image: "02347 sorgado teget.jpg",
-                        description: "Teget pamučna majica kratkih rukava, modernog kroja."
-                    },
-                ]
+            "Frap/2090 Jaguar": [
+                { 
+                    name: "Braon", 
+                    code: "Frap.2090 Jaguar",
+                    image: "braonjagura.jpg",
+                    description: "Opis proizvoda Frap.2090 Jaguar"
+                },
+                { 
+                    name: "Teget", 
+                    code: "Frap.2090 Jaguar",
+                    image: "tegetjagura.jpg",
+                    description: "Opis proizvoda Frap.2090 Jaguar"
+                }
+            ],
+
+            "Msl 2258 Metford": [
+                { 
+                    name: "Braon", 
+                    code: "Msl 2258 Metford",
+                    image: "braonmetford.jpg",
+                    description: "Opis proizvoda Msl 2258 Method"
+                },
+                { 
+                    name: "Crna", 
+                    code: "Msl 2258 Metford",
+                    image: "crnametford.jpg",
+                    description: "Opis proizvoda Msl 2258 Method"
+                },
+                { 
+                    name: "Marine", 
+                    code: "Msl 2258 Metford",
+                    image: "marinemetford.jpg",
+                    description: "Opis proizvoda Msl 2258 Method"
+                },
+                { 
+                    name: "Teget", 
+                    code: "Msl 2258 Metford",
+                    image: "tegetmetford.jpg",
+                    description: "Opis proizvoda Msl 2258 Method"
+                }
+            ],
+
+            "PI 3616 Tokio": [
+                { 
+                    name: "Teget", 
+                    code: "PI 3616 Tokio",
+                    image: "tegettokio.jpg",
+                    description: "Opis proizvoda PI 3616 Tokio"
+                },
+                { 
+                    name: "Plava", 
+                    code: "PI 3616 Tokio",
+                    image: "plavatokio.jpg",
+                    description: "Opis proizvoda PI 3616 Tokio"
+                }
+            ],
+
+            "TM 6277 Bondo": [
+                { 
+                    name: "Bela", 
+                    code: "TM 6277 Bondo",
+                    image: "belabondo.jpg",
+                    description: "Opis proizvoda TM 6277 Bondo"
+                },
+                { 
+                    name: "Crna", 
+                    code: "TM 6277 Bondo",
+                    image: "crnabondo.jpg",
+                    description: "Opis proizvoda TM 6277 Bondo"
+                }
+            ],
+
+            "TMT 3550 Lugano": [
+                { 
+                    name: "Crvena", 
+                    code: "TMT 3550 Lugano",
+                    image: "crvenalugano.jpg",
+                    description: "Opis proizvoda TMT 3550 Lugano"
+                }
+            ],
+
+            "TMT 3588 Caldo": [
+                { 
+                    name: "Plava", 
+                    code: "TMT 3588 Caldo",
+                    image: "caldoplava.jpg",
+                    description: "Opis proizvoda TMT 3588 Caldo"
+                }
+            ],
+
+            "TMT 10006 Marinelli": [
+                { 
+                    name: "Bordo-bela", 
+                    code: "TMT 10006 Marinelli",
+                    image: "bordobelamarineli.jpg",
+                    description: "Opis proizvoda TMT 10006 Marinelli"
+                }
+            ],
+
+            "TPL 3597 Logic": [
+                { 
+                    name: "Bela", 
+                    code: "TPL 3597 Legit",
+                    image: "belalogic.jpg",
+                    description: "Opis proizvoda TPL 3597 Legit"
+                },
+                { 
+                    name: "Zelena", 
+                    code: "TPL 3597 Legit",
+                    image: "zelenalogic.jpg",
+                    description: "Opis proizvoda TPL 3597 Legit"
+                }
+            ],
+
+            "FR 2900 Violes": [
+                { 
+                    name: "Bela-teget", 
+                    code: "FR 2900 Violes",
+                    image: "belategetvioles.jpg",
+                    description: "Opis proizvoda FR 2900 Violes"
+                },
+                { 
+                    name: "Teget-bela", 
+                    code: "FR 2900 Violes",
+                    image: "tegetbelavioles.jpg",
+                    description: "Opis proizvoda FR 2900 Violes"
+                }
+            ],
+
+            "FR 4755 Juser": [
+                { 
+                    name: "Crna", 
+                    code: "FR 4755 Juser",
+                    image: "crnajuser.jpg",
+                    description: "Opis proizvoda FR 4755 Juser"
+                },
+                { 
+                    name: "Siva", 
+                    code: "FR 4755 Juser",
+                    image: "sivajuser.jpg",
+                    description: "Opis proizvoda FR 4755 Juser"
+                }
+            ],
+
+            "J-2086 Nede": [
+                { 
+                    name: "Nede", 
+                    code: "J-2086 Nede",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda J-2086 Nede"
+                }
+            ],
+
+            "Mid2248 Tomix": [
+                { 
+                    name: "Tomix", 
+                    code: "Mid2248 Tomix",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Mid2248 Tomix"
+                }
+            ],
+
+            "Sp. 2843 Salimakers": [
+                { 
+                    name: "Salimakers", 
+                    code: "Sp. 2843 Salimakers",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Sp. 2843 Salimakers"
+                }
+            ],
+
+            "TMT 01002 Enzo": [
+                { 
+                    name: "Enzo", 
+                    code: "TMT 01002 Enzo",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 01002 Enzo"
+                }
+            ],
+
+            "TMT 3552 and 3580": [
+                { 
+                    name: "and", 
+                    code: "TMT 3552 and 3580",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3552 and 3580"
+                }
+            ],
+
+            "TMT 3588 Primavera": [
+                { 
+                    name: "Primavera", 
+                    code: "TMT 3588 Primavera",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3588 Primavera"
+                }
+            ],
+
+            "TMT 10006 Marines": [
+                { 
+                    name: "Marines", 
+                    code: "TMT 10006 Marines",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 10006 Marines"
+                }
+            ],
+
+            "Zippo": [
+                { 
+                    name: "Zippo", 
+                    code: "Zippo",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Zippo"
+                }
+            ],
+
+            "FR 2515 Nikita": [
+                { 
+                    name: "Nikita", 
+                    code: "FR 2515 Nikita",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda FR 2515 Nikita"
+                }
+            ],
+
+            "FR 4790 Rufues": [
+                { 
+                    name: "Rufues", 
+                    code: "FR 4790 Rufues",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda FR 4790 Rufues"
+                }
+            ],
+
+            "KT 1005 RAJAK": [
+                { 
+                    name: "RAJAK", 
+                    code: "KT 1005 RAJAK",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda KT 1005 RAJAK"
+                }
+            ],
+
+            "Pisanela": [
+                { 
+                    name: "Pisanela", 
+                    code: "Pisanela",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Pisanela"
+                }
+            ],
+
+            "TCY 1002 TBX": [
+                { 
+                    name: "TBX", 
+                    code: "TCY 1002 TBX",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TCY 1002 TBX"
+                }
+            ],
+
+            "TMT 1090 Deni": [
+                { 
+                    name: "Deni", 
+                    code: "TMT 1090 Deni",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 1090 Deni"
+                }
+            ],
+
+            "TMT 3567 Maki": [
+                { 
+                    name: "Maki", 
+                    code: "TMT 3567 Maki",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3567 Maki"
+                }
+            ],
+
+            "TMT 03601 Guedo": [
+                { 
+                    name: "Guedo", 
+                    code: "TMT 03601 Guedo",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 03601 Guedo"
+                }
+            ],
+
+            "TMT6237 TEO": [
+                { 
+                    name: "TEO", 
+                    code: "TMT6237 TEO",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT6237 TEO"
+                }
+            ],
+
+            "FR 4690 Palmas": [
+                { 
+                    name: "Palmas", 
+                    code: "FR 4690 Palmas",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda FR 4690 Palmas"
+                }
+            ],
+
+            "Fr 4787 Rico": [
+                { 
+                    name: "Rico", 
+                    code: "Fr 4787 Rico",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Fr 4787 Rico"
+                }
+            ],
+
+            "Louviniou": [
+                { 
+                    name: "Louviniou", 
+                    code: "Louviniou",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Louviniou"
+                }
+            ],
+
+            "PI 3482 Sidnej": [
+                { 
+                    name: "Sidnej", 
+                    code: "PI 3482 Sidnej",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda PI 3482 Sidnej"
+                }
+            ],
+
+            "TCY 1030 Tikko": [
+                { 
+                    name: "Tikko", 
+                    code: "TCY 1030 Tikko",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TCY 1030 Tikko"
+                }
+            ],
+
+            "TMT 2069 RSIKO": [
+                { 
+                    name: "RSIKO", 
+                    code: "TMT 2069 RSIKO",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 2069 RSIKO"
+                }
+            ],
+
+            "TMT 3574 GUINOS": [
+                { 
+                    name: "GUINOS", 
+                    code: "TMT 3574 GUINOS",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3574 GUINOS"
+                }
+            ],
+
+            "TMT 3601 I deli.1": [
+                { 
+                    name: "I deli.1", 
+                    code: "TMT 3601 I deli.1",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3601 I deli.1"
+                }
+            ],
+
+            "TP 12476 TEAM": [
+                { 
+                    name: "TEAM", 
+                    code: "TP 12476 TEAM",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TP 12476 TEAM"
+                }
+            ],
+
+            "FR 4695 Soria": [
+                { 
+                    name: "Soria", 
+                    code: "FR 4695 Soria",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda FR 4695 Soria"
+                }
+            ],
+
+            "Fr2860 Verdik": [
+                { 
+                    name: "Verdik", 
+                    code: "Fr2860 Verdik",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda Fr2860 Verdik"
+                }
+            ],
+
+            "MS-2299 Sailing": [
+                { 
+                    name: "Sailing", 
+                    code: "MS-2299 Sailing",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda MS-2299 Sailing"
+                }
+            ],
+
+            "PI 3615 Karhi": [
+                { 
+                    name: "Karhi", 
+                    code: "PI 3615 Karhi",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda PI 3615 Karhi"
+                }
+            ],
+
+            "TDC1 004 Laki": [
+                { 
+                    name: "Laki", 
+                    code: "TDC1 004 Laki",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TDC1 004 Laki"
+                }
+            ],
+
+            "TMT 3531 Collare": [
+                { 
+                    name: "Collare", 
+                    code: "TMT 3531 Collare",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3531 Collare"
+                }
+            ],
+
+            "TMT 3576 Cataniu": [
+                { 
+                    name: "Cataniu", 
+                    code: "TMT 3576 Cataniu",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 3576 Cataniu"
+                }
+            ],
+
+            "TMT 6327 Tao": [
+                { 
+                    name: "Tao", 
+                    code: "TMT 6327 Tao",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TMT 6327 Tao"
+                }
+            ],
+
+            "TPL 2479 Hami": [
+                { 
+                    name: "Hami", 
+                    code: "TPL 2479 Hami",
+                    image: "placeholder.jpg",
+                    description: "Opis proizvoda TPL 2479 Hami"
+                }
+            ]
+        },
+                proizvodi: {
+                    "02/285 Premium": [
+                        { 
+                            name: "Bela", 
+                            code: "02/285 Premium",
+                            image: "02285 premium bela.jpg",
+                            description: "Bela pamučna majica kratkih rukava, udobnog kroja."
+                        },
+                        { 
+                            name: "Zelena",
+                            code: "02/285 Premium",
+                            image: "02285 premium zelena.jpg",
+                            description: "Zelena pamučna majica kratkih rukava, klasičnog kroja."
+                        },
+                        { 
+                            name: "Plava", 
+                            code: "02/285 Premium",
+                            image: "02285 premium plava.jpg",
+                            description: "Plava pamučna majica kratkih rukava,premium kvalitet."
+                        },
+                        { 
+                            name: "Roze", 
+                            code: "02/285 Premium",
+                            image: "02285 premium roze.jpg",
+                            description: "Roze pamučna majica kratkih rukava, premium kvalitet."
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/285 Premium",
+                            image: "02285 premium teget.jpg",
+                            description: "Teget pamučna majica kratkih rukava, premium kvalitet."
+                        },
+                        { 
+                            name: "Siva", 
+                            code: "02/285 Premium",
+                            image: "02285 premium siva.jpg",
+                            description: "Siva pamučna majica kratkih rukava, premium kvalitet."
+                        },
+                        { 
+                            name: "Maslina", 
+                            code: "02/285 Premium",
+                            image: "02285 premium maslina.jpg",
+                            description: "Maslinasta pamučna majica kratkih rukava, premium kvalitet."
+                        }
+                    ],
+                    "02/352 Medium New": [
+                        { 
+                            name: "Bela", 
+                            code: "02/352 Medium New",
+                            image: "02352 medium new bela.jpg",
+                            description: "Bela pamučna majica kratkih rukava, osnovni model."
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/352 Medium New",
+                            image: "02352 medium new teget.jpg",
+                            description: "Siva pamučna majica kratkih rukava, udobnog kroja."
+                        },
+                        { 
+                            name: "Siva", 
+                            code: "02/352 Medium New",
+                            image: "02352 medium new siva.jpg",
+                            description: "Siva pamučna majica kratkih rukava, udobnog kroja."
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/352 Medium New",
+                            image: "02352 medium new crna.jpg",
+                            description: "Siva pamučna majica kratkih rukava, udobnog kroja."
+                        }
+                    ],
+                    "02/347 Sorgado": [
+                        { 
+                            name: "Crna", 
+                            code: "02/347 Sorgado",
+                            image: "02347 sorgado bela.jpg",
+                            description: "Crna pamučna majica kratkih rukava, sportski stil."
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/347 Sorgado",
+                            image: "02347 sorgado bela.jpg",
+                            description: "Bela pamučna majica kratkih rukava, letnji stil."
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/347 Sorgado",
+                            image: "02347 sorgado teget.jpg",
+                            description: "Teget pamučna majica kratkih rukava, modernog kroja."
+                        }
+                    ],
+                    "02/285 Haiti": [
+                        { 
+                            name: "Teget", 
+                            code: "02/285 Haiti",
+                            image: "haititeget.jpg",
+                            description: "Opis proizvoda 02/285 Haiti"
+                        }
+                    ],
+                    "02/285 Silva": [
+                        { 
+                            name: "Bela", 
+                            code: "02/285 Silva",
+                            image: "silvabela.jpg",
+                            description: "Opis proizvoda 02/285 Silva"
+                        }
+                    ],
+                    "02/312 Tiberije New": [
+                        { 
+                            name: "Teget", 
+                            code: "02/312 Tiberije New",
+                            image: "tegettiberijenew.jpg",
+                            description: "Opis proizvoda 02/312 Tiberije New"
+                        },
+                        { 
+                            name: "Maslinasta", 
+                            code: "02/312 Tiberije New",
+                            image: "maslinastatiberijenew.jpg",
+                            description: "Opis proizvoda 02/312 Tiberije New"
+                        },
+                        { 
+                            name: "Belo-zelena", 
+                            code: "02/312 Tiberije New",
+                            image: "belezelenotiberijenew.jpg",
+                            description: "Opis proizvoda 02/312 Tiberije New"
+                        }
+                    ],
+                    "02/326 Fluo/1": [
+                        { 
+                            name: "Zelena", 
+                            code: "02/326 Fluo/1",
+                            image: "zelenafluo.jpg",
+                            description: "Opis proizvoda 02/326 Fluo/1"
+                        }
+                    ],
+                    "02/330 Cartelo/1": [
+                        { 
+                            name: "Bordo", 
+                            code: "02/330 Cartelo/1",
+                            image: "bordocartelo.jpg",
+                            description: "Opis proizvoda 02/330 Cartelo/1"
+                        },
+                        {
+                             
+                            name: "Petrol", 
+                            code: "02/330 Cartelo/1",
+                            image: "petrolcartelo.jpg",
+                            description: "Opis proizvoda 02/330 Cartelo/1"
+                        }
+                    ],
+                    "02/335 Italianstyle": [
+                        { 
+                            name: "Teget", 
+                            code: "02/335 Italianstyle",
+                            image: "tegetitalianstyle.jpg",
+                            description: "Opis proizvoda 02/335 Italianstyle"
+                        }
+                    ],
+                    "02/335 Mojito": [
+                        { 
+                            name: "Bela", 
+                            code: "02/335 Mojito",
+                            image: "belamojito.jpg",
+                            description: "Opis proizvoda 02/335 Mojito"
+                        }
+                    ],
+                    "02/335 Negroni": [
+                        { 
+                            name: "Bela", 
+                            code: "02/335 Negroni",
+                            image: "belanegroni.jpg",
+                            description: "Opis proizvoda 02/335 Negroni"
+                        }
+                    ],
+                    "02/336 SummerTime": [
+                        { 
+                            name: "Bela", 
+                            code: "02/336 SumerTime",
+                            image: "belasummertime.jpg",
+                            description: "Opis proizvoda 02/336 SumerTime"
+                        }
+                    ],
+                    "02/337 Sardin": [
+                        { 
+                            name: "Bela", 
+                            code: "02/337 Sardin",
+                            image: "belasardin.jpg",
+                            description: "Opis proizvoda 02/337 Sardin"
+                        }
+                    ],
+                    "02/338 Jungle": [
+                        { 
+                            name: "Bela", 
+                            code: "02/338 Jungle",
+                            image: "belajungle.jpg",
+                            description: "Opis proizvoda 02/338 Jungle"
+                        }
+                    ],
+                    "02/339 Gintonic": [
+                        { 
+                            name: "Bela", 
+                            code: "02/339 Gintonic",
+                            image: "placeholder.jpg",
+                            description: "Opis proizvoda 02/339 Gintonic"
+                        }
+                    ],
+                    "02/340 Siva": [
+                        { 
+                            name: "Siva", 
+                            code: "02/340 Pikeo",
+                            image: "sivapikeo.jpg",
+                            description: "Opis proizvoda 02/340 Pikeo"
+                        },
+                        { 
+                            name: "Plava", 
+                            code: "02/340 Pikeo",
+                            image: "plavapikeo.jpg",
+                            description: "Opis proizvoda 02/340 Pikeo"
+                        },
+                        { 
+                            name: "Džins", 
+                            code: "02/340 Pikeo",
+                            image: "dzinspikeo.jpg",
+                            description: "Opis proizvoda 02/340 Pikeo"
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/340 Pikeo",
+                            image: "crnapikeo.jpg",
+                            description: "Opis proizvoda 02/340 Pikeo"
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/340 Pikeo",
+                            image: "belapikeo.jpg",
+                            description: "Opis proizvoda 02/340 Pikeo"
+                        }
+                    ],
+                    "02/342 Plein": [
+                        { 
+                            name: "Crna", 
+                            code: "02/342 Plein",
+                            image: "crnaplein.jpg",
+                            description: "Opis proizvoda 02/342 Plein"
+                        }
+                    ],
+                    "02/343 Colori": [
+                        { 
+                            name: "Šampanj", 
+                            code: "02/343 Colori",
+                            image: "šampanjcolori.jpg",
+                            description: "Opis proizvoda 02/343 Colori"
+                        }
+                    ],
+                    "02/344 Army": [
+                        { 
+                            name: "Bela", 
+                            code: "02/344 Army",
+                            image: "placeholder.jpg",
+                            description: "Opis proizvoda 02/344 Army"
+                        }
+                    ],
+                    "02/345 Berlin": [
+                        { 
+                            name: "Teget", 
+                            code: "02/345 Berlin",
+                            image: "tegetberlin.jpg",
+                            description: "Opis proizvoda 02/345 Berlin"
+                        }
+                    ],
+                    "02/348 Cartello": [
+                        { 
+                            name: "Teget", 
+                            code: "02/348 Cartello",
+                            image: "tegetcartello.jpg",
+                            description: "Opis proizvoda 02/348 Cartello"
+                        },
+                        { 
+                            name: "Svetlo-plava", 
+                            code: "02/348 Cartello",
+                            image: "svetloplavacartello.jpg",
+                            description: "Opis proizvoda 02/348 Cartello"
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/348 Cartello",
+                            image: "belacartello.jpg",
+                            description: "Opis proizvoda 02/348 Cartello"
+                        }
+                    ],
+                    "02/350 Naturale": [
+                        { 
+                            name: "Belo-crvena", 
+                            code: "02/350 Naturale",
+                            image: "belocrvenanaturale.jpg",
+                            description: "Opis proizvoda 02/350 Naturale"
+                        }
+                    ],
+                    "02/350 Tibet": [
+                        { 
+                            name: "Bela", 
+                            code: "02/350 Tibet",
+                            image: "belatibet.jpg",
+                            description: "Opis proizvoda 02/350 Tibet"
+                        }
+                    ],
+                    "02/352 Antony/1": [
+                        { 
+                            name: "Crna", 
+                            code: "02/352 Antony/1",
+                            image: "crnaantony.1.jpg",
+                            description: "Opis proizvoda 02/352 Antony/1"
+                        }
+                    ],
+                    "02/353 Ivy": [
+                        { 
+                            name: "Teget", 
+                            code: "02/353 Ivy",
+                            image: "tegetivy.jpg",
+                            description: "Opis proizvoda 02/353 Ivy"
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/353 Ivy",
+                            image: "belaivy.jpg",
+                            description: "Opis proizvoda 02/353 Ivy"
+                        }
+                    ],
+                    "02/353 Navy": [
+                        { 
+                            name: "Teget", 
+                            code: "02/353 Navy",
+                            image: "tegetnavy.jpg",
+                            description: "Opis proizvoda 02/353 Navy"
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/353 Navy",
+                            image: "belanavy.jpg",
+                            description: "Opis proizvoda 02/353 Navy"
+                        }
+
+                    ],
+                    "02/356 Cloe": [
+                        { 
+                            name: "Bela", 
+                            code: "02/356 Cloe",
+                            image: "belacloe.jpg",
+                            description: "Opis proizvoda 02/356 Cloe"
+                        }
+                    ],
+                    "02/357 Jin-Tonik": [
+                        { 
+                            name: "Bela", 
+                            code: "02/357 Jin-Tonik",
+                            image: "belajintonik.jpg",
+                            description: "Opis proizvoda 02/357 Jin-Tonik"
+                        }
+                    ],
+                    "02/358 Fiori": [
+                        { 
+                            name: "Bela", 
+                            code: "02/358 Fiori",
+                            image: "belafiori.jpg",
+                            description: "Opis proizvoda 02/358 Fiori"
+                        }
+                    ],
+                    "02/360 Racing": [
+                        { 
+                            name: "Bela", 
+                            code: "02/360 Racing",
+                            image: "belaracing.jpg",
+                            description: "Opis proizvoda 02/360 Racing"
+                        }
+                    ],
+                    "02/361 Latento": [
+                        { 
+                            name: "Teget", 
+                            code: "02/361 Latento",
+                            image: "tegetlatento.jpg",
+                            description: "Opis proizvoda 02/361 Latento"
+                        },
+                        { 
+                            name: "Svetlo-plava", 
+                            code: "02/361 Latento",
+                            image: "svetloplavalatento.jpg",
+                            description: "Opis proizvoda 02/361 Latento"
+                        },
+                        { 
+                            name: "Belo-teget", 
+                            code: "02/361 Latento",
+                            image: "belotegetlatento.jpg",
+                            description: "Opis proizvoda 02/361 Latento"
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/361 Latento",
+                            image: "crnalatento.jpg",
+                            description: "Opis proizvoda 02/361 Latento"
+                        },
+                        { 
+                            name: "Maslinasta", 
+                            code: "02/361 Latento",
+                            image: "maslinastalatento.jpg",
+                            description: "Opis proizvoda 02/361 Latento"
+                        },
+                    ],
+                    "02/362 Poketo": [
+                        { 
+                            name: "Bela", 
+                            code: "02/362 Poketo",
+                            image: "belapoketo.jpg",
+                            description: "Opis proizvoda 02/362 Peketo"
+                        }
+                    ],
+                    "02/363 Antony": [
+                        { 
+                            name: "Bela", 
+                            code: "02/363 Antony",
+                            image: "belaantony.jpg",
+                            description: "Opis proizvoda 02/363 Antony"
+                        }
+                    ],
+                    "02/364 Gunios": [
+                        { 
+                            name: "Bela", 
+                            code: "02/364 Gunios",
+                            image: "belagunios.jpg",
+                            description: "Opis proizvoda 02/364 Gunios"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/364 Gunios",
+                            image: "tegetgunios.jpg",
+                            description: "Opis proizvoda 02/364 Gunios"
+                        }
+                    ],
+                    "02/366 Silver": [
+                        { 
+                            name: "Bela", 
+                            code: "02/366 Silver",
+                            image: "belasilver.jpg",
+                            description: "Opis proizvoda 02/366 Silver"
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/366 Silver",
+                            image: "crnasilver.jpg",
+                            description: "Opis proizvoda 02/366 Silver"
+                        }
+                    ],
+                    "02/369 Goldys": [
+                        { 
+                            name: "Bela", 
+                            code: "02/369 Goldys",
+                            image: "belagoldys.jpg",
+                            description: "Opis proizvoda 02/369 Goldys"
+                        },
+                        { 
+                            name: "Bela", 
+                            code: "02/369 Goldys",
+                            image: "crnagoldys.jpg",
+                            description: "Opis proizvoda 02/369 Goldys"
+                        },
+                        { 
+                            name: "Maslinasta", 
+                            code: "02/369 Goldys",
+                            image: "maslinastagoldys.jpg",
+                            description: "Opis proizvoda 02/369 Goldys"
+                        }
+                    ],
+                    "02/369 Rim": [
+                        { 
+                            name: "Bela", 
+                            code: "02/369 Rim",
+                            image: "belarim.jpg",
+                            description: "Opis proizvoda 02/369 Rim"
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/369 Rim",
+                            image: "crnarim.jpg",
+                            description: "Opis proizvoda 02/369 Rim"
+                        },
+                        { 
+                            name: "Maslinasta", 
+                            code: "02/369 Rim",
+                            image: "maslinastarim.jpg",
+                            description: "Opis proizvoda 02/369 Rim"
+                        }
+                    ],
+                    "02/370 Duomo": [
+                        { 
+                            name: "Bela", 
+                            code: "02/370 Duomo",
+                            image: "beladuomo.jpg",
+                            description: "Opis proizvoda 02/370 Duomo"
+                        }
+                    ],
+                    "02/371 Lumi": [
+                        { 
+                            name: "Bordo", 
+                            code: "02/371 Lumi",
+                            image: "bordolumi.jpg",
+                            description: "Opis proizvoda 02/371 Lumi"
+                        },
+                        { 
+                            name: "Petrol", 
+                            code: "02/371 Lumi",
+                            image: "petrollumi.jpg",
+                            description: "Opis proizvoda 02/371 Lumi"
+                        }
+                    ],
+                    "02/372 Apolo": [
+                        { 
+                            name: "Bela", 
+                            code: "02/372 Apolo",
+                            image: "belapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        },
+                        { 
+                            name: "Zelena", 
+                            code: "02/372 Apolo",
+                            image: "zelenapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        },
+                        { 
+                            name: "Nektarina", 
+                            code: "02/372 Apolo",
+                            image: "nektarinaapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        },
+                        { 
+                            name: "Roze", 
+                            code: "02/372 Apolo",
+                            image: "rozeapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        },
+                        { 
+                            name: "Svetlo-plava", 
+                            code: "02/372 Apolo",
+                            image: "svetloplavaapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/372 Apolo",
+                            image: "tegetapolo.jpg",
+                            description: "Opis proizvoda 02/372 Apolo"
+                        }
+                    ],
+                    "02/373 Tomito": [
+                        { 
+                            name: "Bela", 
+                            code: "02/373 Tomito",
+                            image: "belatomito.jpg",
+                            description: "Opis proizvoda 02/373 Tomito"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/373 Tomito",
+                            image: "tegettomito.jpg",
+                            description: "Opis proizvoda 02/373 Tomito"
+                        }
+                    ],
+                    "02/374 Micelize": [
+                        { 
+                            name: "Krem", 
+                            code: "02/374 Micelize",
+                            image: "kremmicelize.jpg",
+                            description: "Opis proizvoda 02/374 Micelize"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/374 Micelize",
+                            image: "tegetmicelize.jpg",
+                            description: "Opis proizvoda 02/374 Micelize"
+                        },
+                        { 
+                            name: "Krem", 
+                            code: "02/374 Micelize",
+                            image: "kremmicelize.jpg",
+                            description: "Opis proizvoda 02/374 Micelize"
+                        }
+                    ],
+                    "02/375 Hilfi": [
+                        { 
+                            name: "Bela", 
+                            code: "02/375 Hilfi",
+                            image: "belahilfi.jpg",
+                            description: "Opis proizvoda 02/375 Hilfi"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/375 Hilfi",
+                            image: "tegethilfi.jpg",
+                            description: "Opis proizvoda 02/375 Hilfi"
+                        }
+                    ],
+                     "02/376 Bosito": [
+                        { 
+                            name: "Bela", 
+                            code: "02/376 Bosito",
+                            image: "belabosito.jpg",
+                            description: "Opis proizvoda 02/376 Bosito"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/376 Bosito",
+                            image: "tegetbosito.jpg",
+                            description: "Opis proizvoda 02/376 Bosito"
+                        }
+                    ],
+                     "02/377 Boneo": [
+                        { 
+                            name: "Bela", 
+                            code: "02/377 Boneo",
+                            image: "belaboneo.jpg",
+                            description: "Opis proizvoda 02/373 Boneo"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/376 Boneo",
+                            image: "tegetboneo.jpg",
+                            description: "Opis proizvoda 02/379 Boneo"
+                        }
+                    ],
+                        "02/379 Vela": [
+                        { 
+                            name: "Bela", 
+                            code: "02/379 Vela",
+                            image: "belavela.jpg",
+                            description: "Opis proizvoda 02/373 Vela"
+                        },
+                        { 
+                            name: "Teget", 
+                            code: "02/379 Velao",
+                            image: "tegetvela.jpg",
+                            description: "Opis proizvoda 02/379 Vela"
+                        }
+                    ],
+                       "02/380 Paulo": [
+                        { 
+                            name: "Bela", 
+                            code: "02/380 Paulo",
+                            image: "belapaulo.jpg",
+                            description: "Opis proizvoda 02/373 Paulo"
+                        },
+                        { 
+                            name: "Crna", 
+                            code: "02/380 Paulo",
+                            image: "crnapaulo.jpg",
+                            description: "Opis proizvoda 02/380 Paulo"
+                        }
+                    ],
+                       "02/380 Blacky": [
+                        { 
+                            name: "Crna", 
+                            code: "02/380 Blacky",
+                            image: "crnablacky.jpg",
+                            description: "Opis proizvoda 02/380 Blacky"
+                        },
+                    ]
+                }
             },
             farmerke: {
-                "10/100": [
-                    { 
-                        name: "Plave farmerke", 
-                        code: "10/100",
-                        image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Klasične plave farmerke, regular fit."
-                    },
-                    { 
-                        name: "Crne farmerke", 
-                        code: "10/100",
-                        image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Crne farmerke, slim fit, premium kvalitet."
-                    }
-                ],
-                "11/110": [
-                    { 
-                        name: "Sive farmerke", 
-                        code: "11/110",
-                        image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Sive farmerke, relaxed fit, udobne za svakodnevno nošenje."
-                    },
-                    { 
-                        name: "Tamno plave farmerke", 
-                        code: "11/110",
-                        image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Tamno plave farmerke, straight fit, izdržljiv materijal."
-                    },
-                    { 
-                        name: "Svetle farmerke", 
-                        code: "11/110",
-                        image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Svetle farmerke, boot cut, letnji stil."
-                    }
-                ]
+                roba: {
+                    "10/100": [
+                        { 
+                            name: "Plave farmerke", 
+                            code: "10/100",
+                            image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Klasične plave farmerke, regular fit."
+                        },
+                        { 
+                            name: "Crne farmerke", 
+                            code: "10/100",
+                            image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Crne farmerke, slim fit, premium kvalitet."
+                        }
+                    ]
+                },
+                proizvodi: {
+                    "11/110": [
+                        { 
+                            name: "Sive farmerke", 
+                            code: "11/110",
+                            image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Sive farmerke, relaxed fit, udobne za svakodnevno nošenje."
+                        },
+                        { 
+                            name: "Tamno plave farmerke", 
+                            code: "11/110",
+                            image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Tamno plave farmerke, straight fit, izdržljiv materijal."
+                        },
+                        { 
+                            name: "Svetle farmerke", 
+                            code: "11/110",
+                            image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Svetle farmerke, boot cut, letnji stil."
+                        }
+                    ]
+                }
             },
             kosulje: {
-                "20/200": [
-                    { 
-                        name: "Bela košulja", 
-                        code: "20/200",
-                        image: "belakosulja.jpg",
-                        description: "Bela pamučna košulja, klasičnog kroja, dugih rukava."
-                    },
-                    { 
-                        name: "Plava košulja", 
-                        code: "20/200",
-                        image: "plavakosulja.jpg",
-                        description: "Plava pamučna košulja, modernog kroja, dugih rukava."
-                    }
-                ],
-                "21/210": [
-                    { 
-                        name: "Šarena košulja", 
-                        code: "21/210",
-                        image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Šarena letnja košulja, kratkih rukava, laganog materijala."
-                    }
-                ],
-                "22/220": [
-                    { 
-                        name: "Kratkih rukava", 
-                        code: "22/220",
-                        image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-                        description: "Košulja kratkih rukava, letnja kolekcija."
-                    },
-                    { 
-                        name: "Dugih rukava", 
-                        code: "22/220",
-                        image: "rukavidugi1.jpg",
-                        description: "Košulja dugih rukava, zimski stil."
-                    }
-                ]
+                roba: {
+                    "20/200": [
+                        { 
+                            name: "Bela košulja", 
+                            code: "20/200",
+                            image: "belakosulja.jpg",
+                            description: "Bela pamučna košulja, klasičnog kroja, dugih rukava."
+                        },
+                        { 
+                            name: "Plava košulja", 
+                            code: "20/200",
+                            image: "plavakosulja.jpg",
+                            description: "Plava pamučna košulja, modernog kroja, dugih rukava."
+                        }
+                    ]
+                },
+                proizvodi: {
+                    "21/210": [
+                        { 
+                            name: "Šarena košulja", 
+                            code: "21/210",
+                            image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Šarena letnja košulja, kratkih rukava, laganog materijala."
+                        }
+                    ],
+                    "22/220": [
+                        { 
+                            name: "Kratkih rukava", 
+                            code: "22/220",
+                            image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                            description: "Košulja kratkih rukava, letnja kolekcija."
+                        },
+                        { 
+                            name: "Dugih rukava", 
+                            code: "22/220",
+                            image: "rukavidugi1.jpg",
+                            description: "Košulja dugih rukava, zimski stil."
+                        }
+                    ]
+                }
             },
             odela: {
-                "30/300": [
-                    { 
-                        name: "Crno odelo", 
-                        code: "30/300",
-                        image: "odelo1.jpg",
-                        description: "Crno poslovno odelo, premium kvalitet, modernog kroja."
-                    },
-                    { 
-                        name: "Sivo odelo", 
-                        code: "30/300",
-                        image: "odelo2.jpg",
-                        description: "Sivo poslovno odelo, klasičnog kroja."
-                    }
-                ],
-                "31/310": [
-                    { 
-                        name: "Plavo odelo", 
-                        code: "31/310",
-                        image: "odelo3.jpg",
-                        description: "Plavo odelo, modernog kroja, svečani izgled."
-                    },
-                    { 
-                        name: "Tamno sivo odelo", 
-                        code: "31/310",
-                        image: "odelo4.jpg",
-                        description: "Tamno sivo odelo, elegantnog kroja, premium materijal."
-                    }
-                ]
+                roba: {
+                    "30/300": [
+                        { 
+                            name: "Crno odelo", 
+                            code: "30/300",
+                            image: "odelo1.jpg",
+                            description: "Crno poslovno odelo, premium kvalitet, modernog kroja."
+                        },
+                        { 
+                            name: "Sivo odelo", 
+                            code: "30/300",
+                            image: "odelo2.jpg",
+                            description: "Sivo poslovno odelo, klasičnog kroja."
+                        }
+                    ]
+                },
+                proizvodi: {
+                    "31/310": [
+                        { 
+                            name: "Plavo odelo", 
+                            code: "31/310",
+                            image: "odelo3.jpg",
+                            description: "Plavo odelo, modernog kroja, svečani izgled."
+                        },
+                        { 
+                            name: "Tamno sivo odelo", 
+                            code: "31/310",
+                            image: "odelo4.jpg",
+                            description: "Tamno sivo odelo, elegantnog kroja, premium materijal."
+                        }
+                    ]
+                }
             }
         };
 
         // Trenutno selektovane kategorije
         let currentMainCategory = 'majice';
+        let currentSubCategory = '';
         let currentProductCode = '';
 
         // Inicijalizacija aplikacije
@@ -1013,12 +2109,20 @@
             // Hamburger meni
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const navContainer = document.querySelector('.nav-container');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
             
             if (mobileMenuBtn && navContainer) {
                 mobileMenuBtn.addEventListener('click', function() {
                     navContainer.classList.toggle('open');
+                    mobileMenuOverlay.classList.toggle('active');
                 });
             }
+
+            // Zatvaranje menija kada se klikne van njega
+            mobileMenuOverlay.addEventListener('click', function() {
+                navContainer.classList.remove('open');
+                mobileMenuOverlay.classList.remove('active');
+            });
 
             // Dark mode toggle
             const darkModeToggle = document.getElementById('darkModeToggle');
@@ -1048,22 +2152,30 @@
                     
                     // Ažuriraj trenutnu glavnu kategoriju
                     currentMainCategory = this.dataset.category;
+                    currentSubCategory = '';
+                    currentProductCode = '';
+                    
+                    // Ažuriraj prikaz podkategorija
+                    updateSubCategoriesList();
                     
                     // Ažuriraj prikaz šifara proizvoda
                     updateProductCodesList();
-                    
-                    // Resetuj selektovanu šifru proizvoda
-                    currentProductCode = '';
                     
                     // Ažuriraj putanju
                     updatePath();
                     
                     // Ažuriraj prikaz proizvoda
                     updateProductsDisplay();
+
+                    // Zatvori meni na mobilnom
+                    if (window.innerWidth <= 768) {
+                        navContainer.classList.remove('open');
+                        mobileMenuOverlay.classList.remove('active');
+                    }
                 });
             });
             
-            // Pretraga
+            // Pretraga - ograničena na trenutnu kategoriju
             document.getElementById('searchInput').addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
                 filterProducts(searchTerm);
@@ -1074,22 +2186,77 @@
                 updateProductsDisplay();
             });
             
-            // Inicijalno ažuriranje liste šifara proizvoda
-            updateProductCodesList();
+            // Inicijalno ažuriranje podkategorija
+            updateSubCategoriesList();
             
             // Inicijalizacija omiljenih proizvoda
             addFavoritesFunctionality();
         });
+
+        // Funkcija za ažuriranje liste podkategorija
+        function updateSubCategoriesList() {
+            const subCategoriesList = document.getElementById('subCategoriesList');
+            subCategoriesList.innerHTML = '';
+            
+            if (productsData[currentMainCategory]) {
+                // Dodaj podkategorije
+                const subCategories = Object.keys(productsData[currentMainCategory]);
+                
+                subCategories.forEach(subCat => {
+                    const li = document.createElement('li');
+                    li.className = 'category-item';
+                    if (subCat === currentSubCategory) {
+                        li.classList.add('active');
+                    }
+                    
+                    li.innerHTML = `
+                        <i class="fas ${subCat === 'roba' ? 'fa-box' : 'fa-boxes'}"></i>
+                        <span>${subCat.toUpperCase()}</span>
+                    `;
+                    
+                    li.addEventListener('click', function() {
+                        // Ukloni aktivnu klasu sa svih podkategorija
+                        document.querySelectorAll('#subCategoriesList .category-item').forEach(i => {
+                            i.classList.remove('active');
+                        });
+                        
+                        // Dodaj aktivnu klasu na selektovanu podkategoriju
+                        this.classList.add('active');
+                        
+                        // Ažuriraj trenutnu podkategoriju
+                        currentSubCategory = subCat;
+                        currentProductCode = '';
+                        
+                        // Ažuriraj prikaz šifara proizvoda
+                        updateProductCodesList();
+                        
+                        // Ažuriraj putanju
+                        updatePath();
+                        
+                        // Ažuriraj prikaz proizvoda
+                        updateProductsDisplay();
+
+                        // Zatvori meni na mobilnom
+                        if (window.innerWidth <= 768) {
+                            document.querySelector('.nav-container').classList.remove('open');
+                            document.getElementById('mobileMenuOverlay').classList.remove('active');
+                        }
+                    });
+                    
+                    subCategoriesList.appendChild(li);
+                });
+            }
+        }
 
         // Funkcija za ažuriranje liste šifara proizvoda
         function updateProductCodesList() {
             const productCodesList = document.getElementById('productCodesList');
             productCodesList.innerHTML = '';
             
-            // Proveri da li postoje šifre za trenutnu kategoriju
-            if (productsData[currentMainCategory]) {
+            // Proveri da li postoje šifre za trenutnu kategoriju i podkategoriju
+            if (currentSubCategory && productsData[currentMainCategory] && productsData[currentMainCategory][currentSubCategory]) {
                 // Dodaj svaku šifru proizvoda u listu
-                Object.keys(productsData[currentMainCategory]).forEach(code => {
+                Object.keys(productsData[currentMainCategory][currentSubCategory]).forEach(code => {
                     const li = document.createElement('li');
                     li.className = 'category-item';
                     if (code === currentProductCode) {
@@ -1100,7 +2267,7 @@
                         <i class="fas fa-hashtag"></i>
                         <span>${code}</span>
                         <span class="item-count">
-                            ${productsData[currentMainCategory][code].length}
+                            ${productsData[currentMainCategory][currentSubCategory][code].length}
                         </span>
                     `;
                     
@@ -1121,6 +2288,12 @@
                         
                         // Ažuriraj prikaz proizvoda
                         updateProductsDisplay();
+
+                        // Zatvori meni na mobilnom
+                        if (window.innerWidth <= 768) {
+                            document.querySelector('.nav-container').classList.remove('open');
+                            document.getElementById('mobileMenuOverlay').classList.remove('active');
+                        }
                     });
                     
                     productCodesList.appendChild(li);
@@ -1133,8 +2306,12 @@
             const itemsGrid = document.getElementById('itemsGrid');
             
             // Proveri da li postoji selektovana šifra proizvoda
-            if (currentProductCode && productsData[currentMainCategory] && productsData[currentMainCategory][currentProductCode]) {
-                let products = productsData[currentMainCategory][currentProductCode];
+            if (currentProductCode && currentSubCategory && 
+                productsData[currentMainCategory] && 
+                productsData[currentMainCategory][currentSubCategory] && 
+                productsData[currentMainCategory][currentSubCategory][currentProductCode]) {
+                
+                let products = productsData[currentMainCategory][currentSubCategory][currentProductCode];
                 
                 // Sortiranje
                 const sortValue = document.getElementById('sortSelect').value;
@@ -1152,12 +2329,49 @@
                 const pagination = addPagination(products);
                 pagination.displayPage(1);
             } 
+            // Ako je selektovana samo podkategorija
+            else if (currentSubCategory && productsData[currentMainCategory] && productsData[currentMainCategory][currentSubCategory]) {
+                // Prikazi sve proizvode u podkategoriji
+                let allProducts = [];
+                Object.values(productsData[currentMainCategory][currentSubCategory]).forEach(products => {
+                    allProducts = allProducts.concat(products);
+                });
+                
+                // Sortiranje
+                const sortValue = document.getElementById('sortSelect').value;
+                allProducts.sort((a, b) => {
+                    switch(sortValue) {
+                        case 'name-asc': return a.name.localeCompare(b.name);
+                        case 'name-desc': return b.name.localeCompare(a.name);
+                        case 'code-asc': return a.code.localeCompare(b.code);
+                        case 'code-desc': return b.code.localeCompare(a.code);
+                        default: return 0;
+                    }
+                });
+                
+                if (allProducts.length > 0) {
+                    // Prikaz proizvoda sa paginacijom
+                    const pagination = addPagination(allProducts);
+                    pagination.displayPage(1);
+                } else {
+                    itemsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <h3>Nema proizvoda</h3>
+                            <p>Nema proizvoda u ovoj podkategoriji</p>
+                        </div>
+                    `;
+                    document.getElementById('pagination').innerHTML = '';
+                }
+            }
             // Ako je selektovana samo glavna kategorija
             else if (currentMainCategory && productsData[currentMainCategory]) {
                 // Prikazi sve proizvode u glavnoj kategoriji
                 let allProducts = [];
-                Object.values(productsData[currentMainCategory]).forEach(products => {
-                    allProducts = allProducts.concat(products);
+                Object.values(productsData[currentMainCategory]).forEach(subCategory => {
+                    Object.values(subCategory).forEach(products => {
+                        allProducts = allProducts.concat(products);
+                    });
                 });
                 
                 // Sortiranje
@@ -1212,9 +2426,14 @@
                 path += ` > ${currentMainCategory.toUpperCase()}`;
                 title = currentMainCategory.toUpperCase();
                 
-                if (currentProductCode) {
-                    path += ` > ${currentProductCode}`;
-                    title = currentProductCode;
+                if (currentSubCategory) {
+                    path += ` > ${currentSubCategory.toUpperCase()}`;
+                    title = currentSubCategory.toUpperCase();
+                    
+                    if (currentProductCode) {
+                        path += ` > ${currentProductCode}`;
+                        title = currentProductCode;
+                    }
                 }
             }
             
@@ -1222,25 +2441,80 @@
             pathElement.textContent = path;
         }
 
-        // Funkcija za filtriranje proizvoda
+        // Funkcija za filtriranje proizvoda (ograničeno na trenutnu kategoriju)
         function filterProducts(searchTerm) {
-            const allProducts = getAllProducts();
-            const filtered = allProducts.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) || 
-                product.code.toLowerCase().includes(searchTerm)
-            );
+            let filteredProducts = [];
             
-            displayFilteredProducts(filtered);
+            if (searchTerm.trim() === '') {
+                // Ako je pretraga prazna, vrati sve proizvode u trenutnoj kategoriji
+                updateProductsDisplay();
+                return;
+            }
+            
+            if (currentProductCode && currentSubCategory && 
+                productsData[currentMainCategory] && 
+                productsData[currentMainCategory][currentSubCategory] && 
+                productsData[currentMainCategory][currentSubCategory][currentProductCode]) {
+                
+                // Filtriraj samo u okviru trenutne šifre proizvoda
+                filteredProducts = productsData[currentMainCategory][currentSubCategory][currentProductCode].filter(
+                    product => product.name.toLowerCase().includes(searchTerm) || 
+                             product.code.toLowerCase().includes(searchTerm)
+                );
+            } 
+            else if (currentSubCategory && productsData[currentMainCategory] && productsData[currentMainCategory][currentSubCategory]) {
+                // Filtriraj u okviru trenutne podkategorije
+                Object.values(productsData[currentMainCategory][currentSubCategory]).forEach(products => {
+                    filteredProducts = filteredProducts.concat(
+                        products.filter(product => 
+                            product.name.toLowerCase().includes(searchTerm) || 
+                            product.code.toLowerCase().includes(searchTerm)
+                        )
+                    );
+                });
+            }
+            else if (currentMainCategory && productsData[currentMainCategory]) {
+                // Filtriraj u okviru trenutne glavne kategorije
+                Object.values(productsData[currentMainCategory]).forEach(subCategory => {
+                    Object.values(subCategory).forEach(products => {
+                        filteredProducts = filteredProducts.concat(
+                            products.filter(product => 
+                                product.name.toLowerCase().includes(searchTerm) || 
+                                product.code.toLowerCase().includes(searchTerm)
+                            )
+                        );
+                    });
+                });
+            }
+            
+            displayFilteredProducts(filteredProducts);
         }
 
-        // Funkcija za dobijanje svih proizvoda
-        function getAllProducts() {
+        // Funkcija za dobijanje svih proizvoda u trenutnoj kategoriji
+        function getCurrentCategoryProducts() {
             let all = [];
-            Object.values(productsData).forEach(category => {
-                Object.values(category).forEach(products => {
-                    all = all.concat(products);
-                });
-            });
+            
+            if (currentMainCategory && productsData[currentMainCategory]) {
+                if (currentSubCategory && productsData[currentMainCategory][currentSubCategory]) {
+                    if (currentProductCode && productsData[currentMainCategory][currentSubCategory][currentProductCode]) {
+                        // Vrati samo proizvode sa trenutnom šifrom
+                        return productsData[currentMainCategory][currentSubCategory][currentProductCode];
+                    } else {
+                        // Vrati sve proizvode u podkategoriji
+                        Object.values(productsData[currentMainCategory][currentSubCategory]).forEach(products => {
+                            all = all.concat(products);
+                        });
+                    }
+                } else {
+                    // Vrati sve proizvode u glavnoj kategoriji
+                    Object.values(productsData[currentMainCategory]).forEach(subCategory => {
+                        Object.values(subCategory).forEach(products => {
+                            all = all.concat(products);
+                        });
+                    });
+                }
+            }
+            
             return all;
         }
 
@@ -1435,11 +2709,13 @@
                     // Pronađi proizvod
                     let product = null;
                     Object.values(productsData).forEach(category => {
-                        Object.values(category).forEach(products => {
-                            const found = products.find(p => 
-                                p.name === productName && p.code === productCode
-                            );
-                            if (found) product = found;
+                        Object.values(category).forEach(subCategory => {
+                            Object.values(subCategory).forEach(products => {
+                                const found = products.find(p => 
+                                    p.name === productName && p.code === productCode
+                                );
+                                if (found) product = found;
+                            });
                         });
                     });
                     
@@ -1465,11 +2741,13 @@
             // Pronađi proizvod u bazi podataka
             let product = null;
             Object.values(productsData).forEach(category => {
-                Object.entries(category).forEach(([pCode, products]) => {
-                    if (pCode === code) {
-                        const found = products.find(p => p.name === name);
-                        if (found) product = found;
-                    }
+                Object.values(category).forEach(subCategory => {
+                    Object.entries(subCategory).forEach(([pCode, products]) => {
+                        if (pCode === code) {
+                            const found = products.find(p => p.name === name);
+                            if (found) product = found;
+                        }
+                    });
                 });
             });
             
